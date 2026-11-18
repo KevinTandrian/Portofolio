@@ -1,31 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n";
 import { Sun, Moon, Menu, X, ArrowUpRight } from "lucide-react";
 
+function subscribeTheme(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("theme_change", callback);
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  mediaQuery.addEventListener("change", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("theme_change", callback);
+    mediaQuery.removeEventListener("change", callback);
+  };
+}
+
+function getThemeSnapshot(): boolean {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    return savedTheme === "dark";
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function getThemeServerSnapshot(): boolean {
+  return false;
+}
+
 export function Navbar() {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme");
-      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const shouldBeDark = savedTheme === "dark" || (!savedTheme && systemPrefersDark);
-      if (shouldBeDark) {
-        document.documentElement.classList.add("dark");
-      }
-      return shouldBeDark;
+  const isDark = useSyncExternalStore(
+    subscribeTheme,
+    getThemeSnapshot,
+    getThemeServerSnapshot
+  );
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
-    return false;
-  });
+  }, [isDark]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const { lang, setLang, t } = useLanguage();
 
   const toggleTheme = () => {
     const nextDark = !isDark;
-    setIsDark(nextDark);
     if (nextDark) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
@@ -33,6 +57,7 @@ export function Navbar() {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
+    window.dispatchEvent(new Event("theme_change"));
   };
 
   const toggleLanguage = () => {

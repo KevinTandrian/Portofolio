@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useSyncExternalStore } from "react";
 
 export type Language = "id" | "en";
 
@@ -240,7 +240,7 @@ function getLangServerSnapshot(): Language {
 }
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const lang = React.useSyncExternalStore(
+  const lang = useSyncExternalStore(
     subscribeLang,
     getLangSnapshot,
     getLangServerSnapshot
