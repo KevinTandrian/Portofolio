@@ -1,0 +1,69 @@
+---
+title: "Sistem Deteksi Video Deepfake Berbasis Spasial-Frekuensi dan Temporal Transformer"
+description: "Alat bantu early screening otomatis bagi jurnalis untuk memverifikasi keaslian video pendek/menengah secara presisi, terkalibrasi, dan memiliki explainable UI."
+date: "2024-09-01"
+tags: ["Deep Learning", "PyTorch", "ConvNeXt", "Transformers", "FFT", "DANN", "Computer Vision"]
+featured: true
+role: "Lead Researcher & ML Engineer"
+metrics: "0.9238 AUC Cross-Dataset"
+githubUrl: "https://github.com/KevinTandrian/deepfake_project"
+demoUrl: ""
+coverImage: "/projects/deepfake.png"
+---
+
+# Sistem Deteksi Video Deepfake Berbasis Spasial-Frekuensi dan Temporal Transformer dengan Pengambil Keputusan Terkalibrasi untuk Verifikasi Jurnalistik
+
+Proyek ini merupakan **Penelitian Tugas Akhir / Skripsi Sarjana Komputer** saya di Universitas Atma Jaya Makassar.
+
+---
+
+## 🎯 Tujuan Utama
+
+Menyediakan alat bantu *early screening* otomatis bagi jurnalis dan pemeriksa fakta (*fact-checkers*) untuk memverifikasi keaslian rekaman video berdurasi pendek hingga menengah secara presisi, terkalibrasi, serta dilengkapi penjelasan hasil (*explainable UI*) yang intuitif.
+
+---
+
+## 🔬 Arsitektur Utama (Hybrid Model)
+
+Model dirancang dengan pendekatan multi-domain hybrid untuk menangkap jejak manipulasi visual dari berbagai dimensi:
+
+### 1. Ekstraksi Wajah (Preprocessing)
+* Menggunakan **MTCNN (Multi-task Cascaded Convolutional Networks)** yang diakselerasi GPU.
+* Dilengkapi mekanisme *Fallback & Relaxed Detection* untuk memastikan deteksi wajah tetap stabil pada frame dengan pencahayaan ekstrem, sudut ekstrem, atau gerakan cepat.
+
+### 2. Cabang Spasial (Spatial Branch)
+* Menggunakan **ConvNeXt-Small** (`convnext_small.fb_in22k_ft_in1k`) yang di-*fine-tune* dari pre-trained ImageNet-22k.
+* Bertugas mengekstraksi representasi tekstur wajah dan artefak visual spasial beresolusi tinggi pada tiap frame.
+
+### 3. Cabang Frekuensi (Frequency Branch)
+* Mengaplikasikan **Fast Fourier Transform (FFT) 2D Log-Magnitude** yang dipadukan dengan **3D Convolutional Neural Network**.
+* Mampu mendeteksi pola anomali frekuensi tinggi dan distorsi spektral yang tidak tampak kasat mata namun selalu ditinggalkan oleh algoritma generator deepfake (*generative artifacts*).
+
+### 4. Model Temporal (Temporal Dynamics)
+* Menggunakan **3-Layer Transformer Encoder** yang dilengkapi *Positional Embedding* dan *CLS Token*.
+* Menganalisis konsistensi pergerakan antarfram, kedipan mata, serta perubahan ekspresi wajah mikro dari waktu ke waktu.
+
+### 5. Domain Generalization (DANN)
+* Menerapkan **Domain-Adversarial Neural Network (DANN)** dengan **Gradient Reversal Layer (GRL)**.
+* Dilatih lintas 4 domain dataset benchmark terkemuka: **Celeb-DF**, **FaceForensics++ (FF++)**, **FaceShifter**, dan **DFDC**.
+* Menghasilkan representasi fitur yang bersifat *domain-invariant* sehingga model tetap akurat pada video di luar data pelatihan.
+
+### 6. Post-Processing & Decision Engine
+* **Temperature Scaling (T = 4.2892):** Mengkalibrasi nilai probabilitas output model agar tingkat kepercayaan (*confidence score*) merepresentasikan akurasi yang sebenarnya secara terpercaya.
+* **Rule-Based Expert System:** Sistem pakar berbasis aturan untuk menyaring *false positives* dan mempertimbangkan kondisi rekaman video.
+* **Dynamic Indonesian Wording Generator:** Menghasilkan narasi penjelasan hasil verifikasi dalam Bahasa Indonesia yang mudah dipahami oleh jurnalis non-teknis.
+
+---
+
+## 💻 Spesifikasi Hardware Pelatihan & Evaluasi
+
+* **GPU:** NVIDIA GeForce RTX 4050 Laptop GPU (CUDA 12.x)
+* **Sistem Operasi:** Windows 11 (Architecture: x86_64)
+* **Framework:** PyTorch, Torchvision, OpenCV, NumPy, SciPy
+
+---
+
+## 📊 Hasil Penelitian & Evaluasi
+
+* **Rata-rata Skor AUC:** **0.9238** pada evaluasi pengujian lintas dataset (*cross-dataset evaluation*).
+* **Generalisasi:** Menunjukkan ketahanan tinggi terhadap kompresi media sosial, perubahan resolusi, dan noise visual.

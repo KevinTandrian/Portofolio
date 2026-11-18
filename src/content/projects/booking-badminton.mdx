@@ -1,0 +1,46 @@
+---
+title: "Sistem Pemesanan Lapangan Bulutangkis (Booking Badminton REST API)"
+description: "Backend REST API berkinerja tinggi untuk reservasi lapangan bulutangkis dengan proteksi double booking konkuren, PostgreSQL, JWT auth, dan CI/CD otomatis."
+date: "2024-06-15"
+tags: ["Node.js", "TypeScript", "Express", "PostgreSQL", "JWT", "Docker", "Vitest", "GitHub Actions", "REST API"]
+featured: true
+role: "Backend & Systems Developer"
+metrics: "Concurrency Lock & Zero Double Booking"
+githubUrl: "https://github.com/KevinTandrian/booking-badminton"
+demoUrl: ""
+coverImage: "/projects/badminton.png"
+---
+
+# Sistem Pemesanan Lapangan Bulutangkis (Booking Badminton REST API)
+
+Layanan backend **RESTful API** siap produksi (*production-grade*) yang dirancang khusus untuk memfasilitasi operasional sistem reservasi lapangan olahraga bulutangkis secara akurat, aman, dan tahan terhadap lonjakan permintaan bersamaan.
+
+---
+
+## 🎯 Solusi & Fitur Utama
+
+1. **Pencegahan Double Booking Konkuren (Race Condition Prevention):**
+   * Mengimplementasikan transaksi database atomik dan mekanisme penguncian (*database locking*) di tingkat PostgreSQL.
+   * Menjamin bahwa ketika beberapa pengguna memesan slot waktu dan lapangan yang sama pada detik yang bersamaan, hanya satu transaksi yang valid dan berhasil, tanpa ada duplikasi reservasi.
+2. **Katalog & Manajemen Jadwal Lapangan:**
+   * Memungkinkan pelanggan melihat ketersediaan jadwal lapangan secara terstruktur per tanggal dan jam.
+   * Panel admin untuk mengelola daftar lapangan, jam operasional, tarif sewa, dan status reservasi.
+3. **Autentikasi & Otorisasi Berbasis Peran (RBAC):**
+   * Pengamanan endpoint menggunakan **JSON Web Tokens (JWT)** dan enkripsi kata sandi menggunakan **bcrypt**.
+   * Pemisahan hak akses antara Pelanggan (*Customer*) dan Pengelola (*Admin*).
+4. **Pengujian Menyeluruh (Automated Testing):**
+   * Unit testing dan integration testing menggunakan **Vitest** dan **Supertest** untuk memverifikasi reliabilitas API endpoints, validasi skema input, serta skenario penolakan double booking.
+5. **Kontainerisasi & CI/CD:**
+   * Diisolasi menggunakan **Docker** dan Docker Compose untuk konsistensi lingkungan pengembangan (*development*) dan produksi.
+   * Pipeline **GitHub Actions** untuk otomatisasi linting, pengujian otomatis, dan *build verification* pada setiap push/pull request.
+
+---
+
+## 🛠️ Tech Stack & Alat
+
+* **Runtime & Bahasa:** Node.js, TypeScript
+* **Web Framework:** Express.js
+* **Database & ORM:** PostgreSQL (Relational Integrity, Atomic Transactions)
+* **Keamanan & Autentikasi:** JWT (JSON Web Tokens), bcrypt
+* **Testing:** Vitest, Supertest
+* **DevOps & Tooling:** Docker, Docker Compose, GitHub Actions, Git
